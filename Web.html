@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>مكتبة الاستعارة - استعارة الكتب</title>
+    <style>
+        /* الألوان الجديدة المشبعة */
+        :root {
+            --primary-color: #004d40; /* Teal Dark - عميق */
+            --secondary-color: #00897b; /* Teal Light - مشبع وحيوي */
+            --accent-color: #ff3d00; /* Deep Orange - للفت الانتباه */
+            --light-color: #e0f2f1; /* Mint Light - فاتح وهادئ */
+            --dark-color: #004d40; 
+            --success-color: #43a047; /* Green - للمتاح */
+            --warning-color: #fb8c00; /* Orange - للمستعار */
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #fcfcfc; /* خلفية ناصعة */
+            color: #333;
+            line-height: 1.6;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 1.2rem 1rem; /* زيادة حجم الهيدر قليلاً */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2); /* ظل أعمق */
+        }
+        
+        .container {
+            width: 95%; /* زيادة عرض المحتوى لملء الشاشة */
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 1.8rem; /* خط أكبر */
+            font-weight: bold;
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 2rem;
+        }
+        
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            transition: color 0.3s, border-bottom 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--secondary-color);
+            border-bottom: 2px solid var(--secondary-color);
+        }
+        
+        .search-section {
+            background-color: var(--light-color);
+            padding: 1.5rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 3px solid var(--secondary-color);
+        }
+        
+        .search-container {
+            display: flex;
+            gap: 1.5rem; /* مسافة أكبر */
+            flex-wrap: wrap;
+        }
+        
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+        
+        .search-box input, .filter-box select {
+            width: 100%;
+            padding: 0.8rem; /* حقل إدخال أكبر */
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+        
+        .search-box input:focus, .filter-box select:focus {
+            border-color: var(--secondary-color);
+            outline: none;
+        }
+
+        .filter-box {
+            min-width: 200px;
+        }
+        
+        .books-grid {
+            display: grid;
+            /* تبدأ بعمودين على الأجهزة المتوسطة */
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 2rem; /* فجوات أكبر للوضوح */
+            margin-bottom: 3rem;
+        }
+        
+        .book-card {
+            background-color: white;
+            border-radius: 12px; /* حواف أكثر دائرية */
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15); /* ظل أنعم وأوضح */
+            transition: transform 0.4s ease-out, box-shadow 0.4s ease-out;
+            border: 1px solid #eee;
+        }
+        
+        .book-card:hover {
+            transform: translateY(-8px); /* ارتقاء أكبر عند التحويم */
+            box-shadow: 0 10px 25px rgba(0,0,0,0.25);
+        }
+        
+        /* تم حذف كود .book-image من الكود الأصلي بناءً على طلبك */
+
+        .book-info {
+            padding: 1.5rem;
+        }
+        
+        .book-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            color: var(--primary-color);
+        }
+        
+        .book-category {
+            display: inline-block;
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 0.3rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+            font-weight: bold;
+        }
+        
+        .book-description {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 1.5rem;
+            /* التعديل لزيادة ارتفاع الوصف */
+            height: 150px; 
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .book-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        .book-author {
+            color: var(--primary-color);
+        }
+        
+        .book-price {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+        
+        .book-status {
+            padding: 0.4rem 0.8rem;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            display: block; /* لضمان عرضها بشكل منفصل */
+            text-align: center;
+        }
+        
+        .available {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .borrowed {
+            background-color: var(--warning-color);
+            color: white;
+        }
+        
+        .borrow-btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.1rem;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+        
+        .borrow-btn:hover:not(:disabled) {
+            background-color: var(--secondary-color);
+        }
+        
+        .borrow-btn:disabled {
+            background-color: #999;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        
+        .return-date {
+            font-size: 0.9rem;
+            color: var(--accent-color);
+            margin-top: 0.75rem;
+            text-align: center;
+        }
+        
+        footer {
+            background-color: var(--dark-color);
+            color: var(--light-color);
+            text-align: center;
+            padding: 2rem;
+            margin-top: 2rem;
+        }
+        
+        /* === MEDIA QUERIES للتوافق مع الأجهزة === */
+        
+        /* اللابتوب والشاشات الكبيرة: 3 أعمدة */
+        @media (min-width: 1024px) {
+             .books-grid {
+                grid-template-columns: repeat(3, 1fr); 
+            }
+        }
+
+        /* الأجهزة اللوحية (Tablet): عمودان */
+        @media (min-width: 600px) and (max-width: 1023px) {
+            .books-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1.5rem;
+            }
+            .search-container {
+                flex-direction: column;
+            }
+        }
+        
+        /* الهواتف المحمولة (Mobile): عمود واحد */
+        @media (max-width: 599px) {
+            .books-grid {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            nav ul li {
+                margin: 0.5rem 0.5rem;
+            }
+            .search-container {
+                flex-direction: column;
+                gap: 0.75rem;
+            }
+            .book-title {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">مكتبة الاستعارة</div>
+                <nav>
+                    <ul>
+                        <li><a href="#">الرئيسية</a></li>
+                        <li><a href="#">جميع الكتب</a></li>
+                        <li><a href="#">حول المكتبة</a></li>
+                        <li><a href="#">اتصل بنا</a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+    
+    <section class="search-section">
+        <div class="container">
+            <div class="search-container">
+                <div class="search-box">
+                    <input type="text" id="searchInput" placeholder="ابحث باسم الكتاب أو المؤلف...">
+                </div>
+                <div class="filter-box">
+                    <select id="categoryFilter">
+                        <option value="all">جميع التصنيفات</option>
+                        </select>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <main class="container">
+        <div id="booksContainer" class="books-grid">
+            </div>
+    </main>
+    
+    <footer>
+        <div class="container">
+            <p>© 2024 مكتبة الاستعارة. جميع الحقوق محفوظة.</p>
+        </div>
+    </footer>
+    
+    <script>
+        // بيانات الكتب - تم حذف خاصية الصورة بالكامل
+        const books = [
+            {
+                "id": 1,
+                "title": "وادي الذئاب المنسية",
+                "author": "عمرو عبد الحميد",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثالث من سلسلة أرض زيكولا، تدور أحداث الرواية في أرض يحكمها شاهد السماء، حيث يعيش البشر والذئاب والملديون في سلم، قبل أن يجتاز ذئب رهيب إحدى العابرات الست."
+            },
+            {
+                "id": 2,
+                "title": "أوبال",
+                "author": "حنان لاشين",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثاني من سلسلة مملكة البلاغة، تدور أحداثها في عالم خيالي مليء بالمغامرات والأسرار، حيث تسعى الشخصيات لتحقيق أمنياتها وتتبع حبها الحقيقي."
+            },
+            {
+                "id": 3,
+                "title": "أمانوس",
+                "author": "حنان لاشين",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثالث من سلسلة مملكة البلاغة، تدور أحداثها في عالم خيالي مليء بالمغامرات والأسرار، حيث يسعى الأبطال لتحقيق أهدافهم في مواجهة التحديات."
+            },
+            {
+                "id": 4,
+                "title": "كويكول",
+                "author": "حنان لاشين",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الرواية الرابعة من سلسلة مملكة البلاغة، تدور أحداثها في مدينة خيالية جزائرية تُدعى كويكول، حيث تنبض الكتب بالحياة وتستدعي محاربي البلاغة للدفاع عن أرضها."
+            },
+            {
+                "id": 5,
+                "title": "ولنا في الحلال لقاء",
+                "author": "أحمد عطا عبدالراضي",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "رسالة لكل من كتم الحب بين طيات قلبه خوفًا من ربه، تدور أحداثها في إطار درامي رومانسي حول شاب وفتاة تنشأ بينهما قصة حب."
+            },
+            {
+                "id": 6,
+                "title": "إسود وردي",
+                "author": "مصطفى ذكري",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "رواية تتنقل بين أماكن مختلفة وأعمال أدبية وفنية أخرى، تدور أحداثها حول شخصية خالد الذي يخطئ ويصحح أخطاءه بسرعة. كُتبت في الأصل كسيناريو سينمائي."
+            },
+            {
+                "id": 8,
+                "title": "الإنسان يموت كثيرًا",
+                "author": "حمدي السراج",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "مجموعة قصصية تتناول فكرة الموت بمعانيه المختلفة، سواء موت الأحباب أو موت الأحلام، وتأثير ذلك على الإنسان."
+            },
+            {
+                "id": 9,
+                "title": "فيروس خيانة",
+                "author": "عمرو بركات",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "رواية تتناول فكرة الخيانة كفيروس يصيب القلوب ويجعل الناس بارعين في الغل والحقد والطمع."
+            },
+            {
+                "id": 10,
+                "title": "حكايات التعب والشقاء",
+                "author": "نبيل القط",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "دليل للصحة النفسية يتناول الاضطرابات النفسية الشائعة ويقدم إرشادات للتعامل معها، موجهًا للمتخصصين والعامة."
+            },
+            {
+                "id": 11,
+                "title": "القراءة السريعة الرائعة",
+                "author": "توني بوزان",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "دليل عملي لتعلم تقنيات القراءة السريعة وتحسين الفهم والاستيعاب."
+            },
+            {
+                "id": 12,
+                "title": "العادات الذرية",
+                "author": "جيمس كلير",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "يقدم الكتاب إطار عمل لتطوير مهاراتك يوميًا، من خلال بناء عادات جيدة والتخلص من العادات السيئة، مع التركيز على التغييرات الصغيرة التي تحدث تأثيرًا هائلًا."
+            },
+            {
+                "id": 13,
+                "title": "استراحة نفسية",
+                "author": "كريم إسماعيل",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يهدف إلى توفير فسحة للقارئ للتوقف والتأمل وإعادة شحن طاقته الداخلية، ويمزج بين العلم والدين والفلسفة لتحقيق صحة نفسية أفضل."
+            },
+            {
+                "id": 14,
+                "title": "المخ الأبله",
+                "author": "د. دين بيرنيت",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "استكشاف ممتع لطريقة عمل الدماغ البشري وأخطائه المضحكة والمفيدة."
+            },
+            {
+                "id": 15,
+                "title": "العادات السبع للناس الأكثر فاعلية",
+                "author": "ستيفن كوفي",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب كلاسيكي في مجال التنمية البشرية يقدم سبع عادات تجعل حياتك أكثر فعالية."
+            },
+            {
+                "id": 16,
+                "title": "فن الإدارة",
+                "author": "بيتر دركر",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب كلاسيكي في مجال الإدارة، يتناول موضوعات مثل التخطيط والتنظيم والإشراف والتوجيه والسيطرة، ويقدم مبادئ الإدارة الحديثة."
+            },
+            {
+                "id": 17,
+                "title": "التخطيط الاستراتيجي الناجح",
+                "author": "محمد عبد الغني حسن هلال",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يتناول مهارات التفكير والتخطيط الاستراتيجي، وكيفية ربط الحاضر بالمستقبل لتحقيق الأهداف وتطوير الأعمال بشكل فعال."
+            },
+            {
+                "id": 18,
+                "title": "تفسير الأحلام",
+                "author": "سيغموند فرويد",
+                "category": "علم نفس",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "يقدم فرويد في هذا الكتاب نظريته في اللاوعي فيما يتعلق بتفسير الأحلام، مؤكدًا أن الأحلام هي الطريق الملكي لمعرفة اللاوعي وتكشف عن الرغبات المكبوتة."
+            },
+            {
+                "id": 19,
+                "title": "لغة الجسد",
+                "author": "آلان وباربرا بيز",
+                "category": "تنمية بشرية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يكشف أسرار الإيماءات التي تنتج أثناء التواصل مع الآخرين، ويقدم فهمًا عميقًا للغة الجسد لتعزيز الثقة بالنفس والقدرة على فهم الآخرين."
+            },
+            {
+                "id": 20,
+                "title": "في قلبي أنثى عبرية",
+                "author": "خولة حمدي",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "قصة حب تتخطى الحدود الدينية والثقافية في رحلة إنسانية مؤثرة."
+            },
+            {
+                "id": 21,
+                "title": "ملائك نصيبين",
+                "author": "أحمد خالد مصطفى",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "رواية تاريخية تجمع بين الواقع والخيال في عالم ملئ بالأسرار."
+            },
+            {
+                "id": 22,
+                "title": "أرض السافلين",
+                "author": "أحمد خالد مصطفى",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "رواية بوليسية مثيرة تبحث في عالم الجريمة المنظمة والصراع بين الخير والشر."
+            },
+            {
+                "id": 23,
+                "title": "مطرقة الساحرات",
+                "author": "هينريتش كريمر",
+                "category": "روايات",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "قصة فانتازيا ساحرة تبحث في عالم السحر والأساطير القديمة."
+            },
+            {
+                "id": 24,
+                "title": "ألف ليلة وليلة١",
+                "author": "مجموعة مؤلفين",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الأول من مجموعة قصصية شهيرة من الشرق الأوسط والهند، تضم حكايات شعبية خيالية مثل علاء الدين وعلي بابا والسندباد، وتتميز بالجن والسحر."
+            },
+            {
+                "id": 25,
+                "title": "ألف ليلة وليلة ٢",
+                "author": "مجموعة مؤلفين",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثاني من مجموعة قصصية شهيرة من الشرق الأوسط والهند، تضم حكايات شعبية خيالية وتتميز بالجن والسحر."
+            },
+            {
+                "id": 26,
+                "title": "ألف ليلة وليلة ٣",
+                "author": "مجموعة مؤلفين",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثالث من مجموعة قصصية شهيرة من الشرق الأوسط والهند، تضم حكايات شعبية خيالية وتتميز بالجن والسحر."
+            },
+            {
+                "id": 27,
+                "title": "ألف ليلة وليلة ٤",
+                "author": "مجموعة مؤلفين",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الرابع من مجموعة قصصية شهيرة من الشرق الأوسط والهند، تضم حكايات شعبية خيالية وتتميز بالجن والسحر."
+            },
+            {
+                "id": 28,
+                "title": "عبقرية خالد",
+                "author": "عباس محمود العقاد",
+                "category": "تاريخ",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "دراسة تحليلية لشخصية القائد الإسلامي خالد بن الوليد، تبرز عبقريته العسكرية والإدارية."
+            },
+            {
+                "id": 29,
+                "title": "عبقرية عمر",
+                "author": "عباس محمود العقاد",
+                "category": "تاريخ",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "دراسة تحليلية لشخصية الخليفة عمر بن الخطاب، تبرز عبقريته في الحكم والإدارة والعدل."
+            },
+            {
+                "id": 30,
+                "title": "مختصر كتاب الحاوي في الطب ١",
+                "author": "أبو بكر الرازي",
+                "category": "طب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الأول من موسوعة طبية ضخمة تجمع خلاصة المعارف الطبية الإغريقية والهندية، بالإضافة إلى ملاحظات الرازي الدقيقة."
+            },
+            {
+                "id": 31,
+                "title": "مختصر كتاب الحاوي في الطب ٢",
+                "author": "أبو بكر الرازي",
+                "category": "طب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثاني من موسوعة طبية ضخمة تجمع خلاصة المعارف الطبية الإغريقية والهندية، بالإضافة إلى ملاحظات الرازي الدقيقة."
+            },
+            {
+                "id": 32,
+                "title": "التذكرة الحمدونية ١",
+                "author": "ابن حمدون",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الأول من موسوعة أدبية ضخمة تجمع فريد النثر والشعر والحكم والأخبار، وتعتبر من أهم المراجع في الأدب العربي."
+            },
+            {
+                "id": 33,
+                "title": "التذكرة الحمدونية ٢",
+                "author": "ابن حمدون",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثاني من موسوعة أدبية ضخمة تجمع فريد النثر والشعر والحكم والأخبار، وتعتبر من أهم المراجع في الأدب العربي."
+            },
+            {
+                "id": 34,
+                "title": "ماذا يحب النبي محمد صلى الله عليه وسلم وماذا يكره",
+                "author": "عدنان الطرشة",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يشرح صفات وأخلاق النبي محمد صلى الله عليه وسلم وأخلاقه الكريمة، وما يحبه ويكرهه، ليكون دليلاً للمسلمين في اتباع سنته."
+            },
+            {
+                "id": 35,
+                "title": "الرحيق المختوم",
+                "author": "صفي الرحمن المباركفوري",
+                "category": "سيرة نبوية",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب شامل في السيرة النبوية الشريفة، حائز على المركز الأول في مسابقة رابطة العالم الإسلامي."
+            },
+            {
+                "id": 36,
+                "title": "تربية الأولاد في الإسلام",
+                "author": "عبدالله ناصح علوان",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "دليل شامل لأسس التربية الإسلامية وأساليبها المعاصرة."
+            },
+            {
+                "id": 37,
+                "title": "تاريخ الطبري ١",
+                "author": "الطبري",
+                "category": "تاريخ",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الأول من أشهر كتب التاريخ الإسلامي وأكثرها دقة وشمولية."
+            },
+            {
+                "id": 38,
+                "title": "تاريخ الطبري ٢",
+                "author": "الطبري",
+                "category": "تاريخ",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "الجزء الثاني من أشهر كتب التاريخ الإسلامي وأكثرها دقة وشمولية."
+            },
+            {
+                "id": 39,
+                "title": "الإمام البخاري محدثًا وفقيهًا",
+                "author": "الحسيني عبد المجيد هاشم",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "يتناول هذا الكتاب سيرة الإمام البخاري ونشأته، وفترة من تاريخ السنة النبوية، وكيف جمعت الأحاديث، ومن هم الأئمة الذين تعلم البخاري على أيديهم، ويقدم دراسة شاملة لحياته وإنجازاته في علم الحديث والفقه."
+            },
+            {
+                "id": 40,
+                "title": "كيف تحفظ القرآن",
+                "author": "يحيى عبد الرزاق الغوثاني",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يقدم قواعد أساسية وطرقًا عملية لحفظ القرآن الكريم، موجهًا للمبتدئين والمتقدمين على حد سواء، ويساعد على فهم وتطبيق أفضل أساليب الحفظ والمراجعة."
+            },
+            {
+                "id": 41,
+                "title": "مسابقات المخيمات",
+                "author": "محمد السعيد",
+                "category": "ترفيه",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يضم مجموعة متنوعة من المسابقات والألعاب الثقافية والترفيهية المناسبة للمخيمات والأنشطة الشبابية."
+            },
+            {
+                "id": 42,
+                "title": "الفقه الميسر في ضوء الكتاب والسنة",
+                "author": "مجموعة من العلماء",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب مبسط يشرح أحكام الفقه الإسلامي مستندًا إلى القرآن والسنة."
+            },
+            {
+                "id": 43,
+                "title": "أخبار الحمقى والمغفلين",
+                "author": "ابن الجوزي",
+                "category": "أدب",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "مجموعة طريفة من القصص والنوادر عن الحمقى والمغفلين عبر التاريخ."
+            },
+            {
+                "id": 44,
+                "title": "بداية المتفقه",
+                "author": "وحيد بن عبد السلام بالي",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يجمع الأحكام الفقهية في ضوابط كلية، وهو شرح مبسط للفقه يسهل على المبتدئين التعرف على الفقه الإسلامي من خلال شرح فصول وأبواب الفقه."
+            },
+            {
+                "id": 45,
+                "title": "الكبائر",
+                "author": "الإمام الذهبي",
+                "category": "ديني",
+                "price": 15,
+                "available": true,
+                "returnDate": null,
+                "description": "كتاب يعدد الكبائر في الإسلام ويشرح أحكامها وآثارها على الفرد والمجتمع."
+            }
+        ];
+
+        
+        function getUniqueCategories() {
+            const categories = books.map(book => book.category);
+            return [...new Set(categories)];
+        }
+
+        function openWhatsAppForBorrowing(bookTitle, bookAuthor) {
+            const userName = prompt("من فضلك أدخل اسمك:");
+            
+            if (!userName) {
+                alert("يجب إدخال اسمك للمتابعة.");
+                return;
+            }
+            
+            const borrowDuration = prompt("اختر مدة الاستعارة:\n1 - أسبوع\n2 - أسبوعين\n3 - ثلاثة أسابيع\n4 - أربعة أسابيع", "1");
+            
+            if (!borrowDuration || borrowDuration < 1 || borrowDuration > 4) {
+                alert("يجب اختيار مدة استعارة صحيحة بين 1 و 4.");
+                return;
+            }
+            
+            let durationText = "";
+            switch(borrowDuration) {
+                case "1": durationText = "أسبوع"; break;
+                case "2": durationText = "أسبوعين"; break;
+                case "3": durationText = "ثلاثة أسابيع"; break;
+                case "4": durationText = "أربعة أسابيع"; break;
+            }
+            
+            const message = `مرحباً، أود استعارة الكتاب التالي:
+            
+الاسم: ${userName}
+الكتاب: ${bookTitle}
+المؤلف: ${bookAuthor}
+مدة الاستعارة: ${durationText}
+
+شكراً جزيلاً`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = "+201123983683"; 
+            const whatsappURL = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+            
+            window.open(whatsappURL, '_blank');
+        }
+
+        function displayBooks(booksToDisplay) {
+            const booksContainer = document.getElementById('booksContainer');
+            booksContainer.innerHTML = '';
+            
+            booksToDisplay.forEach(book => {
+                const bookCard = document.createElement('div');
+                bookCard.className = 'book-card';
+                
+                const statusClass = book.available ? 'available' : 'borrowed';
+                const statusText = book.available ? 'متاح' : 'مستعار';
+                
+                
+                bookCard.innerHTML = `
+                    <div class="book-info">
+                        <h3 class="book-title">${book.title}</h3>
+                        <span class="book-category">${book.category}</span>
+                        <p class="book-description">${book.description}</p>
+                        <div class="book-details">
+                            <span class="book-author">المؤلف: ${book.author}</span>
+                            <span class="book-price">${book.price} جنيه/أسبوع</span>
+                        </div>
+                        <span class="book-status ${statusClass}">${statusText}</span>
+                        <button class="borrow-btn" ${book.available ? '' : 'disabled'}>
+                            ${book.available ? 'استعارة' : 'غير متاح'}
+                        </button>
+                        ${!book.available ? `<p class="return-date">موعد الإرجاع: ${book.returnDate}</p>` : ''}
+                    </div>
+                `;
+                
+                const borrowBtn = bookCard.querySelector('.borrow-btn');
+                if (book.available) {
+                    borrowBtn.addEventListener('click', () => {
+                        openWhatsAppForBorrowing(book.title, book.author);
+                    });
+                }
+                
+                booksContainer.appendChild(bookCard);
+            });
+        }
+
+        function populateCategoryFilter() {
+            const categoryFilter = document.getElementById('categoryFilter');
+            const categories = getUniqueCategories();
+            
+            categories.forEach(category => {
+                const option = document.createElement('option');
+                option.value = category;
+                option.textContent = category;
+                categoryFilter.appendChild(option);
+            });
+        }
+
+        function filterBooks() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const selectedCategory = document.getElementById('categoryFilter').value;
+            
+            const filteredBooks = books.filter(book => {
+                const matchesSearch = book.title.toLowerCase().includes(searchTerm) || 
+                                      book.author.toLowerCase().includes(searchTerm) ||
+                                      book.description.toLowerCase().includes(searchTerm);
+                
+                const matchesCategory = selectedCategory === 'all' || book.category === selectedCategory;
+                
+                return matchesSearch && matchesCategory;
+            });
+            
+            displayBooks(filteredBooks);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            displayBooks(books);
+            populateCategoryFilter();
+            
+            document.getElementById('searchInput').addEventListener('input', filterBooks);
+            document.getElementById('categoryFilter').addEventListener('change', filterBooks);
+        });
+    </script>
+</body>
+</html>
