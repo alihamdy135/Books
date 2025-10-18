@@ -376,7 +376,7 @@
                 "category": "تنمية بشرية / علم نفس",
                 "price": 15,
                 "available": false, // تم جعله غير متاح
-                "returnDate": "15/12/2024",
+                "returnDate": "30/10/2025",
                 "description": "كتاب يتناول مجموعة من القضايا النفسية والاجتماعية بأسلوب سهل، ويقدم إرشادات للتغلب على التحديات النفسية وبناء صحة عقلية أفضل."
             },
             // الكتب الدينية والعقائدية (من القائمة التي تم طلبها في البداية)
@@ -628,8 +628,8 @@
                 "author": "جيمس كلير",
                 "category": "تنمية بشرية",
                 "price": 15,
-                "available": true,
-                "returnDate": null,
+                "available": false,
+                "returnDate": "2/10/2025",
                 "description": "يقدم الكتاب إطار عمل لتطوير مهاراتك يوميًا، من خلال بناء عادات جيدة والتخلص من العادات السيئة، مع التركيز على التغييرات الصغيرة التي تحدث تأثيرًا هائلًا."
             },
             {
@@ -709,7 +709,7 @@
                 "category": "روايات",
                 "price": 15,
                 "available": false, // تم تعديل الحالة هنا
-                "returnDate": "05/12/2024",
+                "returnDate": "30/10/2025",
                 "description": "قصة حب تتخطى الحدود الدينية والثقافية في رحلة إنسانية مؤثرة."
             },
             {
@@ -1035,7 +1035,7 @@
                         <button class="borrow-btn" ${book.available ? '' : 'disabled'}>
                             ${book.available ? 'استعارة' : 'غير متاح'}
                         </button>
-                        ${!book.available && book.returnDate ? `<p class="return-date">موعد الإرجاع المتوقع: 30/10/2025</p>` : ''}
+                        ${!book.available && book.returnDate ? `<p class="return-date"> موعد الإرجاع المتوقع ${book.returnDate} </p>` : ''}
                     </div>
                 `;
                 
